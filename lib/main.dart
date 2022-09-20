@@ -20,19 +20,35 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        title: 'My Shop',
-        debugShowCheckedModeBanner: false,
-        theme: ThemeData(
-            fontFamily: 'Lato',
-            colorScheme: ColorScheme.fromSwatch(
-              primarySwatch: Colors.purple,
-            ).copyWith(
-              secondary: Colors.deepOrange,
-            )),
-        home: const SafeArea(
-          // child: ProductDetailScreen(ProductsManager().items[0]),
-          // child: ProductsOverviewScreen(),
-          child: OrdersScreen(),
-        ));
+      title: 'My Shop',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+          fontFamily: 'Lato',
+          colorScheme: ColorScheme.fromSwatch(
+            primarySwatch: Colors.purple,
+          ).copyWith(
+            secondary: Colors.deepOrange,
+          )),
+      home: const ProductsOverviewScreen(),
+      routes: {
+        CartScreen.routeName: (ctx) => const CartScreen(),
+        OrdersScreen.routeName: (ctx) => const OrdersScreen(),
+        UserProductsScreen.routeName: (ctx) => const UserProductsScreen(),
+      },
+      onGenerateRoute: (settings) {
+        if (settings.name == ProductDetailScreen.routeName) {
+          final productId = settings.arguments as String;
+          return MaterialPageRoute(
+            builder: (ctx) {
+              return ProductDetailScreen(
+                ProductsManager().findByProductId(productId),
+              );
+            },
+          );
+        }
+
+        return null;
+      },
+    );
   }
 }
