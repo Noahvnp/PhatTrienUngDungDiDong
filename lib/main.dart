@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:myshop/ui/cart/cart_manager.dart';
+import 'package:myshop/ui/products/edit_product_screen.dart';
 import 'package:provider/provider.dart';
 
 import 'ui/products/products_manager.dart';
@@ -58,6 +59,18 @@ class MyApp extends StatelessWidget {
             );
           }
 
+          if (settings.name == EditProductScreen.routeName) {
+            final productId = settings.arguments as String?;
+            return MaterialPageRoute(
+              builder: (ctx) {
+                return EditProductScreen(
+                  productId != null
+                      ? ctx.read<ProductsManager>().findByProductId(productId)
+                      : null,
+                );
+              },
+            );
+          }
           return null;
         },
       ),
