@@ -51,19 +51,6 @@ class ProductsManager with ChangeNotifier {
     _productsService.authToken = authToken;
   }
 
-  Future<void> fetchProducts([bool filterByUser = false]) async {
-    _items = await _productsService.fetchProducts(filterByUser);
-    notifyListeners();
-  }
-
-  Future<void> addProduct(Product product) async {
-    final newProduct = await _productsService.addProduct(product);
-    if (newProduct != null) {
-      _items.add(newProduct);
-      notifyListeners();
-    }
-  }
-
   int get itemCount {
     return _items.length;
   }
@@ -80,31 +67,43 @@ class ProductsManager with ChangeNotifier {
     return _items.firstWhere((prod) => prod.id == id);
   }
 
-  // void addProduct(Product product) {
-  //   _items.add(
-  //     product.copyWith(
-  //       id: 'p${DateTime.now().toIso8601String()}',
-  //     ),
-  //   );
-  //   notifyListeners();
-  // }
-
-  void updateProduct(Product product) {
-    final index = _items.indexWhere((item) => item.id == product.id);
-    if (index >= 0) {
-      _items[index] = product;
-      notifyListeners();
-    }
-  }
-
   void toggleFavoriteStatus(Product product) {
     final savedStatus = product.isFavorite;
     product.isFavorite = !savedStatus;
   }
 
-  void deleteProduct(String id) {
+  Future<void> fetchProducts([bool filterByUser = false]) async {
+    _items = await _productsService.fetchProducts(filterByUser);
+    notifyListeners();
+  }
+
+  Future<void> addProduct(Product product) async {
+    final newProduct = await _productsService.addProduct(product);
+    if (newProduct != null) {
+      _items.add(newProduct);
+      notifyListeners();
+    }
+  }
+
+  Future<void> updateProduct(Product product) async {
+    final index = _items.indexWhere((item) => item.id == product.id);
+    if (index >= 0) {
+      if (await _productsService.updateProduct(product)) {
+        _items[index] = product;
+        notifyListeners();
+      }
+    }
+  }
+
+  Future<void> deleteProduct(String id) async {
     final index = _items.indexWhere((item) => item.id == id);
+    Product? existingProduct = _items[index];
     _items.removeAt(index);
     notifyListeners();
+
+    if (!await _productsService.deleteProduct(id)) {
+      _items.insert(index, existingProduct);
+      notifyListeners();
+    }
   }
 }
