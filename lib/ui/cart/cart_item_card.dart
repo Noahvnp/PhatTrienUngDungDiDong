@@ -40,9 +40,9 @@ class CartItemCard extends StatelessWidget {
           'Do you want to remove this item from the cart?',
         );
       },
-      onDismissed: ((direction) => {
-            context.read<CartManager>().removeItem(productId),
-          }),
+      onDismissed: (direction) {
+        context.read<CartManager>().removeItem(productId);
+      },
       child: builItemCard(),
     );
   }

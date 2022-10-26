@@ -47,6 +47,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (ctx) => CartManager(),
         ),
+        ChangeNotifierProvider(
+          create: (ctx) => OrdersManager(),
+        ),
       ],
       child: Consumer<AuthManager>(
         builder: (ctx, authMananger, child) {
